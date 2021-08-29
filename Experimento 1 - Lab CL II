@@ -1,0 +1,168 @@
+library IEEE;
+    use IEEE.STD_LOGIC_1164.ALL;
+    use IEEE.STD_LOGIC_unsigned.all;
+    use IEEE.STD_LOGIC_arith.all;
+
+entity divisor_clock_multiplexado is
+port(
+		clk_in  : in  std_logic;
+		selecao : in  std_logic_vector(1 downto 0);
+		clk_out : out std_logic
+);
+end divisor_clock_multiplexado;
+
+architecture Daniela_Schardong_A_R
+of divisor_clock_multiplexado is
+
+	-- Clock 1
+
+	signal Cont1_1 : integer := 0;
+	signal Cont1_0 : integer := 0;
+	signal O1       : std_logic;
+	
+	-- Clock 2
+
+   signal Cont2   : integer := 0;
+	signal O2       : std_logic;
+
+   -- Clock 3
+
+   signal Cont3   : integer := 0;
+	signal O3       : std_logic;
+
+   -- Clock 4
+
+   signal Cont4   : integer := 0;
+	signal O4       : std_logic;
+
+
+begin
+
+	-- Clock 1
+	
+	-- Processo de contar do 0 ao 4 com o clock funcionando em borda de subida.
+	
+	Clock1_1: process(clk_in)
+	begin
+		if clk_in'event and clk_in =  '1' then
+			if Cont1_1 < 4 then
+				Cont1_1 <= Cont1_1 + 1;
+			else 
+				Cont1_1 <= 0;
+			end if;	
+		end if;
+	end process Clock1_1;
+	
+	-- Processo de contar do 0 ao 4 com o clock funcionando em borda de descida.
+	
+	Clock1_0: process(clk_in)
+	begin
+		if clk_in'event and clk_in =  '0' then
+			if Cont1_0 < 4 then
+				Cont1_0 <= Cont1_0 + 1;
+			else 
+				Cont1_0 <= 0;
+			end if;	
+		end if;
+	end process Clock1_0;
+	
+	-- Processo para especificar como vai funcionar as ondulacoes.
+	
+	Ondula1: process(Cont1_1, Cont1_0)
+	begin
+		if Cont1_1 < 2 then
+			O1  <= '1';
+		elsif (Cont1_1 < 3) and (Cont1_0 < 3) then
+			O1  <= '1';
+		else 
+			O1  <= '0';
+		end if;
+	end process Ondula1;
+	
+	-- Clock 2
+	
+	-- Processo de contar do 0 ate 19 com o clock funcionando em borda de subida.
+	
+	Clock2: process(clk_in)
+	begin 
+		if clk_in'event and clk_in =  '1' then
+			if Cont2 <  19 then
+			   Cont2 <= Cont2 + 1;
+			else 
+				Cont2 <= 0;
+			end if;
+		end if;
+	end process Clock2;
+	
+	-- Processo para especificar como vai funcionar as ondulacoes.
+	
+	Ondula2: process(Cont2)
+	begin
+		if Cont2 <  18 then
+		      O2  <= '1';
+		else 
+			   O2  <= '0';
+		end if;
+	end process Ondula2;
+	
+	-- Clock 3
+	
+	-- Processo de contar do 0 ate 49 com o clock funcionando em borda de subida.
+	
+	Clock3: process(clk_in)
+	begin 
+		if clk_in'event and clk_in =  '1' then
+			if Cont3 <  49 then
+			   Cont3 <= Cont3 + 1;
+			else 
+				Cont3 <= 0;
+			end if;
+		end if;
+	end process Clock3;
+	
+	-- Processo para especificar como vai funcionar as ondulacoes.
+	
+	Ondula3: process(Cont3)
+	begin
+		if Cont3 <  10 then
+				O3  <= '1';
+		else 
+				O3  <= '0';
+		end if;
+	end process Ondula3;
+	
+	-- Clock 4
+	
+	-- Processo de contar do 0 ate 99 com o clock funcionando em borda de subida.
+	
+	Clock4: process(clk_in)
+	begin 
+		if clk_in'event and clk_in =  '1' then
+			if Cont4 <  99 then
+			   Cont4 <= Cont4 + 1;
+			else 
+				Cont4 <= 0;
+			end if;
+		end if;
+	end process Clock4;
+	
+	-- Processo para especificar como vai funcionar as ondulacoes.
+	
+	Ondula4: process(Cont4)
+	begin
+		if Cont4 <  30 then
+				O4  <= '1';
+		else 
+				O4  <= '0';
+		end if;
+	end process Ondula4;
+	
+	-- Multiplexador.
+	
+	clk_out <= O1 when selecao = "00" else
+				  O2 when selecao = "01" else
+				  O3 when selecao = "10" else
+				  O4 when selecao = "11" else
+				  '0';
+			
+end Daniela_Schardong_A_R;
